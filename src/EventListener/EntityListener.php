@@ -442,6 +442,11 @@ class EntityListener
      */
     public function selectMailByMembreCrestic(?string $status, string $equipe): string
     {
+        $equipeListName = match ($equipe) {
+            "Num&Soc" => "numsoc",
+            default => strtolower($equipe),
+        };
+
         if (empty($status)) {
             // Adresse générique pour équipe non spécifiée
             return "crestic.divers@univ-reims.fr";
@@ -449,25 +454,23 @@ class EntityListener
 
         if ($equipe == "") {
             return match ($status) {
-                "PR", "PU-PH" => "crestic.prof@univ-reims.fr",
+                "PR", "PU-PH" => "crestic.profs@univ-reims.fr",
                 "MCF", "MCU-PH", "PAST" => "crestic.mcf@univ-reims.fr",
                 "Assoc" => "crestic.assoc@univ-reims.fr",
                 "ING", "ING-R", "TECH", "ADM" => "crestic.biatss@univ-reims.fr",
-                "P-DOC", "ATER", "ING-C" => "crestic.contract@univ-reims.fr",
-                "DOC", "DOCH" => "crestic.doc@univ-reims.fr",
+                "P-DOC", "ATER", "ING-C" => "crestic.contractuels@univ-reims.fr",
+                "DOC", "DOCH" => "crestic.doctorants@univ-reims.fr",
                 default => throw new InvalidArgumentException("Statut non reconnu, équipe nulle : $status"),
             };
         } else {
             // Utilisation de l'équipe pour composer une adresse e-mail spécifique au statut et à l'équipe
-            $equipe = strtolower($equipe);
-
             return match ($status) {
-                "PR", "PU-PH" => "crestic.$equipe.prof@univ-reims.fr",
-                "MCF", "MCU-PH", "PAST" => "crestic.$equipe.mcf@univ-reims.fr",
-                "Assoc" => "crestic.$equipe.assoc@univ-reims.fr",
+                "PR", "PU-PH" => "crestic.$equipeListName.prof@univ-reims.fr",
+                "MCF", "MCU-PH", "PAST" => "crestic.$equipeListName.mcf@univ-reims.fr",
+                "Assoc" => "crestic.$equipeListName.assoc@univ-reims.fr",
                 "ING", "ING-R", "TECH", "ADM" => "crestic.biatss@univ-reims.fr",
-                "P-DOC", "ATER", "ING-C" => "crestic.$equipe.contract@univ-reims.fr",
-                "DOC", "DOCH" => "crestic.$equipe.doc@univ-reims.fr",
+                "P-DOC", "ATER", "ING-C" => "crestic.$equipeListName.contract@univ-reims.fr",
+                "DOC", "DOCH" => "crestic.$equipeListName.doc@univ-reims.fr",
                 default => throw new InvalidArgumentException("Statut non reconnu : $status"),
             };
         }
